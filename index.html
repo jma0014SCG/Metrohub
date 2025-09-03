@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>U.S. Metro Dynamics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "recharts": "https://aistudiocdn.com/recharts@^3.1.2"
+  }
+}
+</script>
+<style>
+    :root {
+        --color-primary: #2563eb; /* blue-600 */
+        --color-primary-hover: #1d4ed8; /* blue-700 */
+        --color-primary-light: #eff6ff; /* blue-50 */
+        --color-text-base: #334155; /* slate-700 */
+        --color-text-header: #1e293b; /* slate-800 */
+        --color-text-muted: #64748b; /* slate-500 */
+        --color-accent-green: #16a34a; /* green-600 */
+        --color-accent-green-light: #f0fdf4; /* green-50 */
+    }
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--color-text-base);
+    }
+    @supports (font-variation-settings: normal) {
+        body { font-family: 'Inter var', sans-serif; }
+    }
+</style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
