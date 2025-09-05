@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>U.S. Metro Dynamics Dashboard</title>
+    <title>STOCKBRIDGE | Metro Dynamics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -21,25 +23,47 @@
 </script>
 <style>
     :root {
-        --color-primary: #2563eb; /* blue-600 */
-        --color-primary-hover: #1d4ed8; /* blue-700 */
-        --color-primary-light: #eff6ff; /* blue-50 */
-        --color-text-base: #334155; /* slate-700 */
-        --color-text-header: #1e293b; /* slate-800 */
-        --color-text-muted: #64748b; /* slate-500 */
-        --color-accent-green: #16a34a; /* green-600 */
-        --color-accent-green-light: #f0fdf4; /* green-50 */
+        --font-heading: 'Playfair Display', serif;
+        --font-body: 'Poppins', sans-serif;
+        --color-aegean: #2F4157;
+        --color-cerulean: #33576F;
+        --color-cream: #FDF6EE;
     }
     body {
-        font-family: 'Inter', sans-serif;
-        color: var(--color-text-base);
+        font-family: var(--font-body);
+        background-color: var(--color-cream);
+        color: var(--color-cerulean);
     }
-    @supports (font-variation-settings: normal) {
-        body { font-family: 'Inter var', sans-serif; }
+    h1, h2, h3, h4, h5, h6, .font-heading {
+        font-family: var(--font-heading);
+        color: var(--color-aegean);
+    }
+    .mapboxgl-popup {
+        max-width: 200px !important;
+        font-family: var(--font-body);
+    }
+    .mapboxgl-popup-content {
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #C7D9E5;
+        background-color: rgba(253, 246, 238, 0.9);
+    }
+    .mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+        border-bottom-color: #FDF6EE;
+    }
+    .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+        border-top-color: #FDF6EE;
+    }
+    .mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+        border-right-color: #FDF6EE;
+    }
+    .mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+        border-left-color: #FDF6EE;
     }
 </style>
 </head>
-<body class="bg-slate-50">
+<body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

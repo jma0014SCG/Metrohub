@@ -9,7 +9,11 @@ import { MetroComparison } from './components/MetroComparison';
 import { useSortableData } from './hooks/useSortableData';
 import { mergedMetroData, metroProfiles } from './data/metroData';
 import { View, MetroData, SortConfig, ColumnDefinition } from './types';
-import { PopulationIcon, BriefcaseIcon, DollarIcon, BrainIcon, HomeIcon, BarChartIcon, StarIcon, ChartMixedIcon, ArrowsRightLeftIcon } from './components/icons';
+import { PopulationIcon, BriefcaseIcon, DollarIcon, HomeIcon, BarChartIcon, StarIcon, ChartMixedIcon, ArrowsRightLeftIcon, DocumentIcon, MapPinIcon } from './components/icons';
+import { RawDataViewer } from './components/RawDataViewer';
+import { MarketIQ } from './components/MarketIQ';
+import { leaseData } from './data/leaseData';
+
 
 const App: React.FC = () => {
     const [view, setView] = useState<View>(View.Overview);
@@ -84,7 +88,9 @@ const App: React.FC = () => {
             { key: 'Talent_Score', label: 'Talent', sortable: true },
             { key: 'Affordability_Score', label: 'Affordability', sortable: true },
             { key: 'Rationale', label: 'Rationale', sortable: false },
-        ]
+        ],
+        [View.RawData]: [],
+        [View.MarketIQ]: [],
     }), []);
 
     const findMetroStat = (field: keyof MetroData, order: 'max' | 'min') => {
@@ -106,9 +112,9 @@ const App: React.FC = () => {
         if (view === View.Overview) {
             return (
                 <div>
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Executive Summary</h2>
-                        <p className="text-slate-600 leading-relaxed max-w-4xl">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-[#C7D9E5] mb-8">
+                        <h2 className="text-2xl font-bold text-[#2F4157] mb-2">Executive Summary</h2>
+                        <p className="text-[#33576F] leading-relaxed max-w-4xl">
                             This report presents a comprehensive analysis of demographic and economic shifts across the 50 largest U.S. Metropolitan Statistical Areas (MSAs). The findings reveal sustained dominance of the Sunbelt & Mountain West in population growth, contrasted with significant out-migration from major coastal hubs like New York and Los Angeles. While the "affordability-migration flywheel" persists, high-growth markets like Austin and Nashville now face severe housing cost pressures. Our composite Opportunity Scorecard identifies Dallas-Fort Worth as the top-ranked market, balancing high-volume growth with manageable affordability.
                         </p>
                     </div>
@@ -121,16 +127,22 @@ const App: React.FC = () => {
                 </div>
             );
         }
+        if (view === View.RawData) {
+            return <RawDataViewer />;
+        }
+        if (view === View.MarketIQ) {
+            return <MarketIQ leaseData={leaseData} />;
+        }
         return (
             <div className="space-y-8">
                 <DataChart data={sortedData} view={view} />
 
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
+                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-[#C7D9E5]">
                     <div className="flex justify-end items-center mb-4">
                         <button 
                             onClick={() => setIsComparing(true)}
                             disabled={comparisonSelection.length < 2 || comparisonSelection.length > 4}
-                            className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                            className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-[#33576F] rounded-lg shadow-sm hover:bg-[#2F4157] disabled:bg-slate-300 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#33576F] transition-all duration-200"
                         >
                             <ArrowsRightLeftIcon />
                             <span>Compare ({comparisonSelection.length})</span>
@@ -157,7 +169,9 @@ const App: React.FC = () => {
         [View.Wages]: "Real Wage & Sectoral Performance",
         [View.Sectors]: "Sector Specialization & Dynamics",
         [View.Affordability]: "Affordability & Migration Pressures",
-        [View.Scorecard]: "Opportunity Scorecard"
+        [View.Scorecard]: "Opportunity Scorecard",
+        [View.RawData]: "Raw Data Explorer",
+        [View.MarketIQ]: "MarketIQ: Lease Data Explorer",
     };
 
     const viewIcons: Record<View, React.ReactNode> = {
@@ -167,11 +181,13 @@ const App: React.FC = () => {
         [View.Wages]: <DollarIcon />,
         [View.Sectors]: <ChartMixedIcon />,
         [View.Affordability]: <HomeIcon />,
-        [View.Scorecard]: <StarIcon />
+        [View.Scorecard]: <StarIcon />,
+        [View.RawData]: <DocumentIcon />,
+        [View.MarketIQ]: <MapPinIcon />,
     };
 
     return (
-        <div className="min-h-screen flex bg-slate-50">
+        <div className="min-h-screen flex">
             <Sidebar currentView={view} setView={setView} />
             <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
                 <Header 

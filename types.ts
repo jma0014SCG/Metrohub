@@ -7,6 +7,27 @@ export enum View {
     Sectors = 'sectors',
     Affordability = 'affordability',
     Scorecard = 'scorecard',
+    RawData = 'rawData',
+    MarketIQ = 'marketIQ',
+}
+
+export interface LeaseData {
+    id: string; // Unique ID for each lease
+    'Property Name': string;
+    'Tenant Name': string;
+    'Tenant Square Feet': string;
+    'Tenant Suite': string | number;
+    'Lease Start': string;
+    'Lease End': string;
+    'Rent Per Square Foot': string;
+    'Annual Rent': string | null;
+    'City': string;
+    'State': string;
+    'Submarket': string;
+    'Address': string;
+    'Expense Reimbursment': string | null;
+    // For mapping
+    coords: { lng: number; lat: number };
 }
 
 export interface PopulationData {

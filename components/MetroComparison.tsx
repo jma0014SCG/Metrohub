@@ -49,18 +49,18 @@ export const MetroComparison: React.FC<MetroComparisonProps> = ({ metros, profil
 
     return (
         <div 
-            className="fixed inset-0 bg-slate-900 bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#2F4157] bg-opacity-75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
             aria-labelledby="comparison-title"
         >
             <div 
-                className="bg-white w-full max-w-7xl h-full max-h-[90vh] rounded-xl shadow-2xl flex flex-col border border-slate-300"
+                className="bg-white w-full max-w-7xl h-full max-h-[90vh] rounded-xl shadow-2xl flex flex-col border border-[#C7D9E5]"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="p-4 sm:p-6 border-b flex justify-between items-center flex-shrink-0 bg-slate-50 rounded-t-xl">
-                    <h2 id="comparison-title" className="text-xl sm:text-2xl font-bold text-slate-800">Metropolitan Area Comparison</h2>
+                <div className="p-4 sm:p-6 border-b border-[#C7D9E5] flex justify-between items-center flex-shrink-0 bg-[#FDF6EE]/70 rounded-t-xl">
+                    <h2 id="comparison-title" className="text-xl sm:text-2xl font-bold text-[#2F4157]">Metropolitan Area Comparison</h2>
                     <button onClick={onClose} className="text-slate-500 hover:text-red-600 hover:bg-red-100 p-1 rounded-full transition-colors" aria-label="Close comparison view">
                         <CloseIcon />
                     </button>
@@ -68,27 +68,27 @@ export const MetroComparison: React.FC<MetroComparisonProps> = ({ metros, profil
 
                 <div className="flex-1 overflow-auto">
                     <table className="min-w-full">
-                        <thead className="bg-slate-100 sticky top-0 z-10">
+                        <thead className="bg-[#FDF6EE]/80 sticky top-0 z-10">
                             <tr>
-                                <th scope="col" className="w-1/4 sm:w-1/5 px-4 sm:px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Metric</th>
+                                <th scope="col" className="w-1/4 sm:w-1/5 px-4 sm:px-6 py-3 text-left text-xs font-semibold text-[#2F4157] uppercase tracking-wider">Metric</th>
                                 {metros.map(metro => (
-                                    <th key={metro.MSA} scope="col" className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-slate-800 tracking-wide">
+                                    <th key={metro.MSA} scope="col" className="px-4 sm:px-6 py-3 text-left text-sm font-semibold text-[#2F4157] tracking-wide">
                                         {metro.MSA.split(',')[0]}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-slate-200">
+                        <tbody className="bg-white divide-y divide-[#C7D9E5]">
                             {metricsToCompare.map(metric => {
                                 const bestValue = getBestValue(metric.key, metric.higherIsBetter);
                                 return (
                                     <tr key={metric.key}>
-                                        <th scope="row" className="px-4 sm:px-6 py-4 text-sm font-medium text-slate-600 text-left align-top">{metric.label}</th>
+                                        <th scope="row" className="px-4 sm:px-6 py-4 text-sm font-medium text-[#33576F] text-left align-top">{metric.label}</th>
                                         {metros.map(metro => {
                                             const value = metro[metric.key] as number;
                                             const isBest = value === bestValue;
                                             return (
-                                                <td key={metro.MSA} className={`px-4 sm:px-6 py-4 text-sm whitespace-nowrap ${isBest ? `bg-green-50 text-green-800 font-semibold` : 'text-slate-800'}`}>
+                                                <td key={metro.MSA} className={`px-4 sm:px-6 py-4 text-sm whitespace-nowrap ${isBest ? `bg-[#BBCF9A]/30 text-[#498C6D] font-semibold` : 'text-[#33576F]'}`}>
                                                     {value != null ? metric.format(value) : 'N/A'}
                                                 </td>
                                             )
@@ -98,12 +98,12 @@ export const MetroComparison: React.FC<MetroComparisonProps> = ({ metros, profil
                             })}
                              {profilesToCompare.map(prof => (
                                 <tr key={prof.key}>
-                                    <th scope="row" className="px-4 sm:px-6 py-4 text-sm font-medium text-slate-600 text-left align-top">{prof.label}</th>
+                                    <th scope="row" className="px-4 sm:px-6 py-4 text-sm font-medium text-[#33576F] text-left align-top">{prof.label}</th>
                                     {metros.map(metro => {
                                         const metroProfile = profiles.find(p => p.MSA === metro.MSA);
                                         const value = metroProfile ? metroProfile[prof.key] : 'N/A';
                                         return (
-                                            <td key={metro.MSA} className="px-4 sm:px-6 py-4 text-sm text-slate-600 align-top">
+                                            <td key={metro.MSA} className="px-4 sm:px-6 py-4 text-sm text-[#33576F] align-top">
                                                <p className="whitespace-normal leading-relaxed">{value as string}</p>
                                             </td>
                                         )

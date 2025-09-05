@@ -1,5 +1,5 @@
 {
-  "name": "U.S. Metro Dynamics Dashboard",
-  "description": "An interactive dashboard for analyzing demographic, migration, and employment shifts across major U.S. metropolitan areas from 2018–2025.",
+  "name": "STOCKBRIDGE: Metro Dynamics",
+  "description": "An interactive dashboard from STOCKBRIDGE for analyzing demographic, migration, and employment shifts across major U.S. metropolitan areas.",
   "requestFramePermissions": []
 }

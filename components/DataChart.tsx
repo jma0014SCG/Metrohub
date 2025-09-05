@@ -7,39 +7,42 @@ interface DataChartProps {
     view: View;
 }
 
-const METRIC_OPTIONS: Record<View, { key: keyof MetroData; label: string; format?: (v: number) => string; }[]> = {
+const METRIC_OPTIONS: Record<View, { key: keyof MetroData; label: string; format?: (v: any) => string; }[]> = {
     [View.Overview]: [],
     [View.Population]: [
-        { key: 'YoY_Pop_Growth', label: 'YoY Population Growth', format: v => `${v.toFixed(2)}%` },
+        { key: 'YoY_Pop_Growth', label: 'YoY Population Growth', format: v => v != null ? `${v.toFixed(2)}%` : 'N/A' },
         { key: 'Net_Dom_Mig_per_1k', label: 'Net Domestic Migration per 1k' },
     ],
     [View.Jobs]: [
-        { key: 'CES_YoY', label: 'YoY Job Growth', format: v => `${v.toFixed(2)}%` },
-        { key: 'Unemp_Rate', label: 'Unemployment Rate', format: v => `${v.toFixed(2)}%` },
+        { key: 'CES_YoY', label: 'YoY Job Growth', format: v => v != null ? `${v.toFixed(2)}%` : 'N/A' },
+        { key: 'Unemp_Rate', label: 'Unemployment Rate', format: v => v != null ? `${v.toFixed(2)}%` : 'N/A' },
     ],
     [View.Wages]: [
-        { key: 'QCEW_Real_Wage_YoY', label: 'YoY Real Wage Growth', format: v => `${v.toFixed(2)}%` },
-        { key: 'CAGR_3yr_Wages', label: '3-Year Real Wage CAGR', format: v => `${v.toFixed(2)}%` },
+        { key: 'QCEW_Real_Wage_YoY', label: 'YoY Real Wage Growth', format: v => v != null ? `${v.toFixed(2)}%` : 'N/A' },
+        { key: 'CAGR_3yr_Wages', label: '3-Year Real Wage CAGR', format: v => v != null ? `${v.toFixed(2)}%` : 'N/A' },
     ],
     [View.Sectors]: [
         { key: 'LQ_Tech', label: 'Tech LQ' },
         { key: 'LQ_Logistics', label: 'Logistics LQ' },
     ],
     [View.Affordability]: [
-        { key: 'Rent_to_Income', label: 'Rent-to-Income Ratio', format: v => `${(v * 100).toFixed(1)}%` },
-        { key: 'Severe_Cost_Burden_Renters_Percent', label: 'Severe Renter Cost Burden', format: v => `${v.toFixed(1)}%` },
+        { key: 'Rent_to_Income', label: 'Rent-to-Income Ratio', format: v => v != null ? `${(v * 100).toFixed(1)}%` : 'N/A' },
+        { key: 'Severe_Cost_Burden_Renters_Percent', label: 'Severe Renter Cost Burden', format: v => v != null ? `${v.toFixed(1)}%` : 'N/A' },
     ],
     [View.Scorecard]: [
         { key: 'Composite_0_100', label: 'Composite Score' },
         { key: 'Affordability_Score', label: 'Affordability Score' },
-    ]
+    ],
+    [View.RawData]: [],
+    [View.MarketIQ]: [],
 };
 
-const barColors = ['#2563eb', '#60a5fa', '#f59e0b', '#ef4444'];
+const barColors = ['#33576F', '#498C6D', '#F6D982', '#D95E3D', '#8C4A82', '#5591B5'];
 
 export const DataChart: React.FC<DataChartProps> = ({ data, view }) => {
     const metricOptions = METRIC_OPTIONS[view];
     const [selectedMetrics, setSelectedMetrics] = useState<Array<keyof MetroData>>([]);
+    const [showAllMetros, setShowAllMetros] = useState(false);
 
     useEffect(() => {
         if (metricOptions.length > 0) {
@@ -47,7 +50,8 @@ export const DataChart: React.FC<DataChartProps> = ({ data, view }) => {
         } else {
             setSelectedMetrics([]);
         }
-    }, [view]);
+        setShowAllMetros(false);
+    }, [view, metricOptions]);
 
     const handleMetricChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const metricKey = event.target.value as keyof MetroData;
@@ -64,42 +68,55 @@ export const DataChart: React.FC<DataChartProps> = ({ data, view }) => {
         const primaryMetric = selectedMetrics[0];
         
         const sorted = [...data].sort((a, b) => ((b[primaryMetric] as number) || 0) - ((a[primaryMetric] as number) || 0));
-        const top10 = sorted.slice(0, 10);
-        const bottom10 = sorted.slice(-10).reverse();
-
-        const combined = [...top10, ...bottom10];
         
-        return combined.map(d => {
-            const entry: { name: string; [key: string]: any } = {
+        const dataToShow = showAllMetros 
+            ? sorted
+            : [...sorted.slice(0, 10), ...sorted.slice(-10).reverse()];
+        
+        return dataToShow.map(d => {
+            const entry: { name: string; fullMSA: string; [key: string]: any } = {
                 name: d.MSA.split('-')[0],
+                fullMSA: d.MSA,
             };
             selectedMetrics.forEach(metric => {
                 entry[metric as string] = d[metric];
             });
             return entry;
         });
-    }, [data, selectedMetrics]);
+    }, [data, selectedMetrics, showAllMetros]);
 
     if (metricOptions.length === 0) return null;
 
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
+            const metroName = payload[0]?.payload?.fullMSA;
+
             return (
-                <div className="bg-white p-3 border border-slate-200 rounded-lg shadow-lg">
-                    <p className="font-bold text-slate-800 mb-2">{label}</p>
-                    {payload.map((pld: any) => {
-                        const metricInfo = metricOptions.find(m => m.key === pld.dataKey);
-                        const value = pld.value;
-                        const formattedValue = metricInfo?.format 
-                            ? metricInfo.format(value) 
-                            : (typeof value === 'number' ? value.toLocaleString() : value);
-                        
-                        return (
-                             <p key={pld.dataKey} className="text-sm" style={{ color: pld.fill }}>
-                                <span className="font-semibold">{`${metricInfo?.label}:`}</span> {formattedValue}
-                            </p>
-                        );
-                    })}
+                <div className="bg-white p-3 border border-slate-200 rounded-lg shadow-lg z-50 min-w-[250px]">
+                    <p className="font-bold text-[#2F4157] mb-2 font-heading">{metroName}</p>
+                    <div className="space-y-1">
+                        {payload.map((pld: any) => {
+                            const metricInfo = metricOptions.find(m => m.key === pld.dataKey);
+                            const value = pld.value;
+                            
+                            let formattedValue = 'N/A';
+                            if (value != null) {
+                                formattedValue = metricInfo?.format 
+                                    ? metricInfo.format(value) 
+                                    : (typeof value === 'number' ? value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 }) : String(value));
+                            }
+                            
+                            return (
+                                <div key={pld.dataKey} className="flex justify-between items-center text-sm">
+                                    <div className="flex items-center">
+                                        <span className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: pld.fill }}></span>
+                                        <span className="text-[#33576F]">{metricInfo?.label}:</span>
+                                    </div>
+                                    <span className="font-semibold text-[#2F4157]">{formattedValue}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             );
         }
@@ -107,36 +124,52 @@ export const DataChart: React.FC<DataChartProps> = ({ data, view }) => {
     };
     
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-[#C7D9E5]">
             <div className="flex justify-between items-start mb-6 flex-wrap gap-y-4">
                 <div>
-                    <h3 className="text-xl font-bold text-slate-800">Top & Bottom 10 Metros</h3>
-                     <p className="text-sm text-slate-500 mt-1">Sorted by {metricOptions.find(m => m.key === selectedMetrics[0])?.label || 'first selected metric'}</p>
+                    <h3 className="text-xl font-bold text-[#2F4157]">
+                        {showAllMetros ? 'All 50 Metros' : 'Top & Bottom 10 Metros'}
+                    </h3>
+                     <p className="text-sm text-[#5591B5] mt-1">Sorted by {metricOptions.find(m => m.key === selectedMetrics[0])?.label || 'first selected metric'}</p>
                 </div>
-                <div className="flex flex-wrap gap-x-6 gap-y-2 p-3 bg-slate-50 rounded-lg border">
-                    {metricOptions.map(option => (
-                        <div key={option.key as string} className="flex items-center">
-                            <input
-                                type="checkbox"
-                                id={`metric-${option.key as string}`}
-                                value={option.key as string}
-                                checked={selectedMetrics.includes(option.key)}
-                                onChange={handleMetricChange}
-                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            />
-                            <label htmlFor={`metric-${option.key as string}`} className="ml-2 text-sm text-slate-700 select-none cursor-pointer">
-                                {option.label}
-                            </label>
-                        </div>
-                    ))}
+                <div className="flex items-center gap-4 flex-wrap justify-end">
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 p-3 bg-[#FDF6EE]/60 rounded-lg border border-[#C7D9E5]/50">
+                        {metricOptions.map(option => (
+                            <div key={option.key as string} className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id={`metric-${option.key as string}`}
+                                    value={option.key as string}
+                                    checked={selectedMetrics.includes(option.key)}
+                                    onChange={handleMetricChange}
+                                    className="h-4 w-4 rounded border-gray-300 text-[#33576F] focus:ring-[#33576F] cursor-pointer"
+                                />
+                                <label htmlFor={`metric-${option.key as string}`} className="ml-2 text-sm text-[#33576F] select-none cursor-pointer">
+                                    {option.label}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex items-center p-3 bg-[#FDF6EE]/60 rounded-lg border border-[#C7D9E5]/50">
+                        <input
+                            type="checkbox"
+                            id="showAllToggle"
+                            checked={showAllMetros}
+                            onChange={() => setShowAllMetros(prev => !prev)}
+                            className="h-4 w-4 rounded border-gray-300 text-[#33576F] focus:ring-[#33576F] cursor-pointer"
+                        />
+                        <label htmlFor="showAllToggle" className="ml-2 text-sm text-[#33576F] select-none cursor-pointer">
+                            Show All 50
+                        </label>
+                    </div>
                 </div>
             </div>
             <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#475569' }} angle={-20} textAnchor="end" height={60} interval={0} />
-                    <YAxis tick={{ fontSize: 12, fill: '#475569' }} />
-                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(239, 246, 255, 0.7)' }} />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#33576F' }} angle={-20} textAnchor="end" height={60} interval={0} />
+                    <YAxis tick={{ fontSize: 12, fill: '#33576F' }} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(199, 217, 229, 0.6)' }} />
                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
                      {selectedMetrics.map((metric, index) => {
                          const metricInfo = metricOptions.find(m => m.key === metric);
@@ -149,7 +182,7 @@ export const DataChart: React.FC<DataChartProps> = ({ data, view }) => {
                             />
                          );
                     })}
-                    <Brush dataKey="name" height={30} stroke="#60a5fa" fill="rgba(239, 246, 255, 0.6)" y={360}/>
+                    <Brush dataKey="name" height={30} stroke="#33576F" fill="rgba(199, 217, 229, 0.6)" y={360}/>
                 </BarChart>
             </ResponsiveContainer>
         </div>

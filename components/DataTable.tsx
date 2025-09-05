@@ -19,9 +19,9 @@ export const DataTable = <T extends { MSA: string },>({ data, columns, sortConfi
             return <span className="w-4 h-4 text-slate-400 opacity-30 group-hover:opacity-100 transition-opacity"></span>;
         }
         if (sortConfig.direction === 'ascending') {
-            return <span className="w-4 h-4 text-blue-600"><ArrowUpIcon /></span>;
+            return <span className="w-4 h-4 text-[#33576F]"><ArrowUpIcon /></span>;
         }
-        return <span className="w-4 h-4 text-blue-600"><ArrowDownIcon /></span>;
+        return <span className="w-4 h-4 text-[#33576F]"><ArrowDownIcon /></span>;
     };
 
     const handleCheckboxChange = (item: T) => {
@@ -34,17 +34,17 @@ export const DataTable = <T extends { MSA: string },>({ data, columns, sortConfi
     return (
         <div className="overflow-hidden">
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-100">
+                <table className="min-w-full divide-y divide-[#C7D9E5]">
+                    <thead className="bg-[#FDF6EE]/50">
                         <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-[#2F4157] uppercase tracking-wider">
                                 Compare
                             </th>
                             {columns.map((col) => (
                                 <th
                                     key={col.key as string}
                                     scope="col"
-                                    className={`px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider ${col.sortable ? 'cursor-pointer group' : ''}`}
+                                    className={`px-6 py-3 text-left text-xs font-semibold text-[#2F4157] uppercase tracking-wider ${col.sortable ? 'cursor-pointer group' : ''}`}
                                     onClick={() => col.sortable && onSort(col.key)}
                                 >
                                     <div className="flex items-center space-x-1">
@@ -60,7 +60,7 @@ export const DataTable = <T extends { MSA: string },>({ data, columns, sortConfi
                             const isSelected = comparisonSelection.some(m => m.MSA === item.MSA);
                             const isDisabled = isMaxSelected && !isSelected;
                             return (
-                                <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50 transition-colors duration-150`}>
+                                <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#FDF6EE]/60'} hover:bg-[#C7D9E5]/50 transition-colors duration-150`}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center justify-center">
                                              <input
@@ -68,7 +68,7 @@ export const DataTable = <T extends { MSA: string },>({ data, columns, sortConfi
                                                 checked={isSelected}
                                                 disabled={isDisabled}
                                                 onChange={() => handleCheckboxChange(item)}
-                                                className={`h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 ${isDisabled ? 'cursor-not-allowed bg-slate-200' : 'cursor-pointer'}`}
+                                                className={`h-4 w-4 rounded border-gray-300 text-[#33576F] focus:ring-[#33576F] ${isDisabled ? 'cursor-not-allowed bg-slate-200' : 'cursor-pointer'}`}
                                                 aria-label={`Select ${item.MSA} for comparison`}
                                             />
                                         </div>
@@ -76,7 +76,7 @@ export const DataTable = <T extends { MSA: string },>({ data, columns, sortConfi
                                     {columns.map((col) => (
                                         <td 
                                             key={col.key as string} 
-                                            className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 cursor-pointer"
+                                            className="px-6 py-4 whitespace-nowrap text-sm text-[#33576F] cursor-pointer"
                                             onClick={() => onRowClick(item)}
                                         >
                                             {col.format ? col.format((item as any)[col.key]) : (item as any)[col.key]}
